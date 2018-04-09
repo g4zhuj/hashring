@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	DefaultVirualSpots = 40
+	//DefaultVirualSpots default virual spots
+	DefaultVirualSpots = 400
 )
 
 type node struct {
@@ -24,12 +25,14 @@ func (p nodesArray) Less(i, j int) bool { return p[i].spotValue < p[j].spotValue
 func (p nodesArray) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p nodesArray) Sort()              { sort.Sort(p) }
 
+//HashRing store nodes and weigths
 type HashRing struct {
 	virualSpots int
 	nodes       nodesArray
 	weights     map[string]int
 }
 
+//NewHashRing create a hash ring with virual spots
 func NewHashRing(spots int) *HashRing {
 	if spots == 0 {
 		spots = DefaultVirualSpots
@@ -42,6 +45,7 @@ func NewHashRing(spots int) *HashRing {
 	return h
 }
 
+//AddNodes add nodes to hash ring
 func (h *HashRing) AddNodes(nodeWeight map[string]int) {
 	for nodeKey, w := range nodeWeight {
 		h.weights[nodeKey] = w
@@ -49,16 +53,19 @@ func (h *HashRing) AddNodes(nodeWeight map[string]int) {
 	h.generate()
 }
 
+//AddNode add node to hash ring
 func (h *HashRing) AddNode(nodeKey string, weight int) {
 	h.weights[nodeKey] = weight
 	h.generate()
 }
 
+//RemoveNode remove node
 func (h *HashRing) RemoveNode(nodeKey string) {
 	delete(h.weights, nodeKey)
 	h.generate()
 }
 
+//UpdateNode update node with weight
 func (h *HashRing) UpdateNode(nodeKey string, weight int) {
 	h.weights[nodeKey] = weight
 	h.generate()
@@ -98,6 +105,7 @@ func genValue(bs []byte) uint32 {
 	return v
 }
 
+//GetNode get node with key
 func (h *HashRing) GetNode(s string) string {
 	if len(h.nodes) == 0 {
 		return ""
