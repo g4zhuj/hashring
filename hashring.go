@@ -2,6 +2,7 @@ package hashring
 
 import (
 	"crypto/sha1"
+	"sync"
 	//	"hash"
 	"math"
 	"sort"
@@ -30,6 +31,7 @@ type HashRing struct {
 	virualSpots int
 	nodes       nodesArray
 	weights     map[string]int
+	mu          sync.RWMutex
 }
 
 //NewHashRing create a hash ring with virual spots
@@ -41,12 +43,15 @@ func NewHashRing(spots int) *HashRing {
 	h := &HashRing{
 		virualSpots: spots,
 		weights:     make(map[string]int),
+		mu:          sync.RWMutex{},
 	}
 	return h
 }
 
 //AddNodes add nodes to hash ring
 func (h *HashRing) AddNodes(nodeWeight map[string]int) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	for nodeKey, w := range nodeWeight {
 		h.weights[nodeKey] = w
 	}
@@ -55,18 +60,24 @@ func (h *HashRing) AddNodes(nodeWeight map[string]int) {
 
 //AddNode add node to hash ring
 func (h *HashRing) AddNode(nodeKey string, weight int) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	h.weights[nodeKey] = weight
 	h.generate()
 }
 
 //RemoveNode remove node
 func (h *HashRing) RemoveNode(nodeKey string) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	delete(h.weights, nodeKey)
 	h.generate()
 }
 
 //UpdateNode update node with weight
 func (h *HashRing) UpdateNode(nodeKey string, weight int) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	h.weights[nodeKey] = weight
 	h.generate()
 }
@@ -107,6 +118,8 @@ func genValue(bs []byte) uint32 {
 
 //GetNode get node with key
 func (h *HashRing) GetNode(s string) string {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
 	if len(h.nodes) == 0 {
 		return ""
 	}
@@ -120,6 +133,5 @@ func (h *HashRing) GetNode(s string) string {
 	if i == len(h.nodes) {
 		i = 0
 	}
-
 	return h.nodes[i].nodeKey
 }
