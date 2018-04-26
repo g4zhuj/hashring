@@ -43,7 +43,6 @@ func NewHashRing(spots int) *HashRing {
 	h := &HashRing{
 		virualSpots: spots,
 		weights:     make(map[string]int),
-		mu:          sync.RWMutex{},
 	}
 	return h
 }
