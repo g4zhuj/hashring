@@ -82,6 +82,8 @@ func (h *HashRing) UpdateNode(nodeKey string, weight int) {
 }
 
 func (h *HashRing) generate() {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	var totalW int
 	for _, w := range h.weights {
 		totalW += w
