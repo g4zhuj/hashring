@@ -103,7 +103,7 @@ func TimeTrack(start time.Time) {
 }
 
 func TestSpeed(t *testing.T) {
-	// node=1000 v=50000 on 16GB/win10/i7 init 35s
+	// node=1000 v=50000 on 8GB/win10/i7 init 35s
 	defer TimeTrack(time.Now())
 	nodeWeight := make(map[string]int)
 	for i := 0; i < 1000; i += 1 {
