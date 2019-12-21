@@ -1,0 +1,5 @@
+.idea
+*.exe
+demo
+etc/*.conf
+etc/*.cfg

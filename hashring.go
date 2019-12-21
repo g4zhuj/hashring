@@ -88,8 +88,12 @@ func (h *HashRing) generate() {
 	}
 
 	totalVirtualSpots := h.virualSpots * len(h.weights)
-	h.nodes = nodesArray{}
 
+	var nodeLen, nodeIndex int64
+	for _, w := range h.weights {
+		nodeLen += int64(math.Floor(float64(w) / float64(totalW) * float64(totalVirtualSpots)))
+	}
+	h.nodes = make(nodesArray, nodeLen)
 	for nodeKey, w := range h.weights {
 		spots := int(math.Floor(float64(w) / float64(totalW) * float64(totalVirtualSpots)))
 		for i := 1; i <= spots; i++ {
@@ -100,7 +104,8 @@ func (h *HashRing) generate() {
 				nodeKey:   nodeKey,
 				spotValue: genValue(hashBytes[6:10]),
 			}
-			h.nodes = append(h.nodes, n)
+			h.nodes[nodeIndex] = n
+			nodeIndex += 1
 			hash.Reset()
 		}
 	}
