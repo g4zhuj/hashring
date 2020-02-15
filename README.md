@@ -36,3 +36,9 @@ hash.AddNode("node3", 3)
 node := hash.GetNode("key")
 
 ```
+
+坑点：
+	// 一个9064767行的文件 每行做hashring，结果不一致 原因hashBytes只取4位 529和83 一致  ，这个库是一对多的关系，非多对一
+	// node=1000 vitualSpots=20000
+	//9063340 key=49f57cf0 node=529
+	//9063340 key=49f57cf0 node=83

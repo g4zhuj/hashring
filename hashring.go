@@ -127,7 +127,6 @@ func (h *HashRing) GetNode(s string) string {
 	if len(h.nodes) == 0 {
 		return ""
 	}
-
 	hash := sha1.New()
 	hash.Write([]byte(s))
 	hashBytes := hash.Sum(nil)
